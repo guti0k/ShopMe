@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta http-equiv="content-type" content="text/html" charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/golbalStyle.css}">
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/jquery/3.7.0/dist/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/common.js}"></script>
+
+    <style>
+        .item-link:hover, .item-link:hover > a {
+            color: white !important;
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .export-link:hover > a {
+            color: white !important;
+        }
+
+        tr#headerTable {
+            line-height: 36px;
+        }
+    </style>
+
+    <title>Products - Shopme Admin</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div th:replace="navigation :: menu"></div>
+
+    <h2 class="mt-3">Manage Products</h2>
+
+    <div class="d-flex justify-content-between align-content-center flex-wrap mt-3">
+        <div class="d-flex flex-wrap align-content-center">
+            <button class="btn btn-primary m-2">
+                <a class="text-white" th:href="@{/products/new}">Create New Product</a>
+            </button>
+            <button class="btn btn-outline-primary m-2 export-link">
+                <a class="text-dark" th:href="@{/products/export/csv}">Export to CSV</a>
+            </button>
+        </div>
+
+        <div th:replace="fragments :: search_form('/products/page/1')"></div>
+    </div>
+
+    <div th:if="${message != null}" class="alert alert-success text-center mt-3">
+        [[${message}]]
+    </div>
+
+    <div class="mt-4 full-details">
+        <table class="table table-responsive-xl table-striped table-hover align-middle">
+            <thead class="table-danger">
+            <tr id="headerTable">
+                <th>Product ID</th>
+                <th>Product Image</th>
+                <th>Product Name</th>
+                <th>Brand</th>
+                <th>Category</th>
+                <th>Enabled</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody class="table-group-divider">
+            <tr th:each="product: ${listProducts}">
+                <td>[[${product.id}]]</td>
+                <td>
+                    <img class="img-thumbnail" style="width: 100px" th:src="@{${product.mainImagePath}}" />
+                </td>
+                <td>[[${product.name}]]</td>
+                <td>[[${product.brand.name}]]</td>
+                <td>[[${product.category.name}]]</td>
+                <td>
+                    <div th:replace="fragments :: status(${product.enabled}, 'product', '/products/' + ${product.id})"></div>
+                </td>
+                <td>
+                    <a class="fas fa-file-alt fa-xl icon_green" th:href="@{'/products/detail/' + ${product.id}}" title="View detail product"></a>
+                    <div th:replace="fragments :: edit('product', '/products/edit/' + ${product.id})"></div>
+                    <div th:replace="fragments :: delete('product', ${product.id}, '/products/delete/' + ${product.id}, true)"></div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+<!--    <div th:replace="fragments :: pagination('/products', 'product')"></div>-->
+
+    <div th:replace="fragments :: footer"></div>
+
+    <div th:replace="fragments :: confirm_modal"></div>
+</div>
+
+<script th:src="@{/js/common_list.js}"></script>
+<script type="text/javascript">
+    moduleURL = "[[@{/products}]]";
+
+
+    $(document).ready(function () {
+        $(".link-delete").on("click", function (e) {
+            e.preventDefault();
+            showDeleteConfirmModal($(this), "product")
+
+            // alert($(this).attr("href"));
+            // alert($(this).attr("href", "/hello"))
+        })
+    })
+
+</script>
+
+</body>
+</html>

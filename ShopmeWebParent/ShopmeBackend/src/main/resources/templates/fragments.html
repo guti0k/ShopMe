@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div th:fragment="confirm_modal">
+        <div class="modal fade text-center" id="confirmModal" aria-modal="true" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="modalTitle">Delete Confirm</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <span id="modalBody">Are you sure want to delete this object</span>
+                    </div>
+
+                    <div class="modal-footer">
+                        <a class="btn btn-success" id="yesBtn" href="">Yes</a>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="footer" class="text-center">
+        <p>Shopme Control Panel - Copyright &COPY; Shopme</p>
+    </div>
+
+    <th th:fragment="column_link(moduleURL, fieldName, columnLabel, removeTag)" th:remove="${removeTag}" scope="col">
+      <a th:href="@{${moduleURL} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName} + '&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}" class="text-dark">
+        [[${columnLabel}]]
+      </a>
+      <span th:if="${sortField == fieldName}" th:class="${sortDir == 'asc' ? 'fas fa-sort-up mx-2' : 'fas fa-sort-down mx-2'}"></span>
+    </th>
+
+    <a class="page-link" th:fragment="page_link(moduleURL, pageNumber, label)"
+       th:href="@{${moduleURL} + '/page/' + ${pageNumber} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">[[${label}]]
+    </a>
+
+    <div th:fragment="pagination(moduleURL, entityName)" th:remove="tag">
+        <div class="text-center m-1" th:if="${totalItems > 0}">
+            <span>Showing [[${entityName}]] # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
+        </div>
+        <div class="text-center m-1" th:unless="${totalItems > 0}">
+            <span>Not [[${entityName}]] found</span>
+        </div>
+
+        <div th:if="${totalPages > 0}">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mt-2">
+                    <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+                        <a th:replace="fragments :: page_link(${moduleURL}, 1, 'First')"></a>
+                    </li>
+                    <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+                        <a th:replace="fragments :: page_link(${moduleURL}, ${currentPage - 1}, '&laquo;')"></a>
+                    </li>
+
+                    <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}" th:each="i : ${#numbers.sequence(1, totalPages)}">
+                        <a th:replace="fragments :: page_link(${moduleURL}, ${i}, ${i})"></a>
+                    </li>
+
+                    <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+                        <a th:replace="fragments :: page_link(${moduleURL}, ${currentPage + 1}, '&raquo;')"></a>
+                    </li>
+
+                    <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+                        <a th:replace="fragments :: page_link(${moduleURL}, ${totalPages}, 'Last')"></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div th:fragment="status(enabled, entityName, entityURL)" th:remove="tag">
+        <a th:if="${enabled == true}" class="fa-solid fa-circle-check fa-xl icon_green"
+           th:title="'Disable ' + ${entityName}"
+           th:href="@{${entityURL} + '/enabled/false'}"
+        ></a>
+        <a th:if="${enabled == false}" class="fa-solid fa-circle-check fa-xl icon_silver"
+           th:title="'Enable ' + ${entityName}"
+           th:href="@{${entityURL} + '/enabled/true'}"></a>
+    </div>
+
+    <div th:fragment="edit(entityName, editURL)" th:remove="tag">
+        <a class="fa-solid fa-pen-to-square fa-xl icon_green mx-3"  th:href="@{${editURL}}"
+           th:title="'Edit ' + ${entityName}"></a>
+    </div>
+
+    <div th:fragment="delete(enityName, entityId, deleteURL, visible)" th:remove="tag">
+        <th:block th:if="${visible}">
+            <a class="fa-solid fa-trash fa-lg icon_silver link-delete"
+               th:href="@{${deleteURL}}"
+               th:title="'Delete ' + ${enityName}"
+               th:entityId="${entityId}"
+               data-bs-toggle="modal" data-bs-target="#confirmModal"></a>
+        </th:block>
+    </div>
+
+    <div th:fragment="user_action" th:remove="tag">
+        <a class="fa-solid fa-pen-to-square fa-xl icon_green mx-3" th:href="@{'/users/edit/' + ${user.id}}" title="Edit user"></a>
+        <a class="fa-solid fa-trash fa-lg icon_silver link-delete"
+           th:href="@{'/users/delete/' + ${user.id}}"
+           th:entityId="${user.id}"
+           title="Delete User"
+           data-bs-toggle="modal" data-bs-target="#confirmModal"></a>
+    </div>
+
+    <div th:fragment="search_form(moduleURL)">
+        <form th:action="@{${moduleURL}}" class="form-check-inline m-2 d-flex flex-wrap justify-content-end">
+            <!--            <span>Filter:</span>-->
+            <input type="hidden" name="sortField" th:value="${sortField}">
+            <input type="hidden" name="sortDir" th:value="${sortDir}">
+
+            <input type="search" name="keyword" th:value="${keyword}" placeholder="Search" class="form-control form-check-inline w-auto my-2 me-2" required>
+            <button type="submit" class="btn btn-primary m-2 border-0">
+                <i class="fas fa-search fa-lg"></i>
+            </button>
+            <button type="button" class="btn btn-secondary m-2 border-0" onclick="clearFilter()">
+                <i class="fas fa-eraser fa-lg"></i>
+            </button>
+        </form>
+    </div>
+</body>
+</html>

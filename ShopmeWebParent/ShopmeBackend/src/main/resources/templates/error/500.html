@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+  <meta http-equiv="content-type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/golbalStyle.css}">
+  <script type="text/javascript" th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.min.js}"></script>
+  <script type="text/javascript" th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.js}"></script>
+  <script type="text/javascript" th:src="@{/webjars/jquery/3.7.0/dist/jquery.min.js}"></script>
+  <script type="text/javascript" th:src="@{/js/common.js}"></script>
+
+  <style>
+    .item-link:hover, .item-link:hover > a {
+      color: white !important;
+      cursor: pointer;
+    }
+    a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container-fluid">
+  <div th:replace="navigation :: menu"></div>
+
+  <div class="text-center m-3">
+    <h2>Sorry, the server has encountered an error while processing your request</h2>
+  </div>
+
+  <div th:replace="fragments :: footer"></div>
+
+</div>
+</body>
+</html>

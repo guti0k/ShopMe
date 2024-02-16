@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta http-equiv="content-type" content="text/html" charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/golbalStyle.css}">
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/jquery/3.7.0/dist/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/common.js}"></script>
+
+    <style>
+        .item-link:hover, .item-link:hover > a {
+            color: white !important;
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .export-link:hover > a {
+            color: white !important;
+        }
+
+        tr#headerTable {
+            line-height: 36px;
+        }
+    </style>
+
+    <title>Brands - Shopme Admin</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div th:replace="navigation :: menu"></div>
+
+    <h2 class="mt-3">Manage Brands</h2>
+
+    <div class="d-flex justify-content-between align-content-center flex-wrap mt-3">
+        <div class="d-flex flex-wrap align-content-center">
+            <button class="btn btn-primary m-2">
+                <a class="text-white" th:href="@{/brands/new}">Create New Brands</a>
+            </button>
+            <button class="btn btn-outline-primary m-2 export-link">
+                <a class="text-dark" th:href="@{/brands/export/csv}">Export to CSV</a>
+            </button>
+        </div>
+
+        <div th:replace="fragments :: search_form('/brands/page/1')"></div>
+    </div>
+
+    <div th:if="${message != null}" class="alert alert-success text-center mt-3">
+        [[${message}]]
+    </div>
+
+    <div class="mt-4 full-details">
+        <table class="table table-responsive-xl table-striped table-hover align-middle">
+            <thead class="table-danger">
+            <tr id="headerTable">
+                <th class="hidden-column">Brand ID</th>
+                <th>Logo</th>
+                <th th:replace="fragments :: column_link('/brands', 'name', 'Brand Name', 'none')"></th>
+                <th>Categories</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody class="table-group-divider">
+            <tr th:each="brand: ${listBrands}">
+                <td class="hidden-column">[[${brand.id}]]</td>
+                <td>
+                    <img th:if="${brand.logo != null}" class="img-thumbnail" style="width: 100px"
+                         th:src="@{${brand.logoPath}}"></img>
+                </td>
+                <td>[[${brand.name}]]</td>
+                <td>
+                    <th:block th:each="category : ${brand.categories}">
+                        <span class="badge text-bg-success" th:text="${category.name}"></span>
+                    </th:block>
+                </td>
+                <td>
+                    <div th:replace="fragments :: edit('brand', '/brands/edit/' + ${brand.id})"></div>
+                    <div th:replace="fragments :: delete('brand', ${brand.id}, '/brands/delete/' + ${brand.id}, true)"></div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="less-details my-3">
+        <div th:each="brand: ${listBrands}" class="row m-1">
+            <div class="border-top border-dark row">
+                <div class="col-4 my-3">
+                    <img th:if="${brand.logo != null}" class="img-thumbnail" style="width: 100px"
+                         th:src="@{${brand.logoPath}}"></img>
+                </div>
+                <div class="col-8 my-3">
+                    <div class="mx-3">[[${brand.name}]]</div>
+                    <div class="mt-2">
+                        <div th:replace="fragments :: edit('brand', '/brands/edit/' + ${brand.id})"></div>
+                        <div th:replace="fragments :: delete('brand', ${brand.id}, '/brands/delete/' + ${brand.id}, true)"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments :: pagination('/brands', 'brand')"></div>
+
+    <div th:replace="fragments :: footer"></div>
+
+    <div th:replace="fragments :: confirm_modal"></div>
+</div>
+
+<script th:src="@{/js/common_list.js}"></script>
+<script type="text/javascript">
+    moduleURL = "[[@{/brands}]]";
+
+    $(document).ready(function () {
+        $(".link-delete").on("click", function (e) {
+            e.preventDefault();
+            showDeleteConfirmModal($(this), "brand")
+
+            // alert($(this).attr("href"));
+            // alert($(this).attr("href", "/hello"))
+        })
+    })
+
+</script>
+
+</body>
+</html>
